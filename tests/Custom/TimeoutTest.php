@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Behat\Mink\Tests\Driver\Custom;
 
 use Behat\Mink\Driver\Selenium2Driver;
@@ -27,7 +29,7 @@ class TimeoutTest extends TestCase
         \assert($driver instanceof Selenium2Driver);
 
         // Reset the array of timeouts to avoid impacting other tests
-        $driver->setTimeouts(array());
+        $driver->setTimeouts([]);
 
         parent::resetSessions();
     }
@@ -42,7 +44,7 @@ class TimeoutTest extends TestCase
 
         $this->expectException(DriverException::class);
         $this->expectExceptionMessage('Invalid timeout type: invalid');
-        $driver->setTimeouts(array('invalid' => 0));
+        $driver->setTimeouts(['invalid' => 0]);
     }
 
     public function testShortTimeoutDoesNotWaitForElementToAppear()
@@ -51,7 +53,7 @@ class TimeoutTest extends TestCase
         $driver = $session->getDriver();
         \assert($driver instanceof Selenium2Driver);
 
-        $driver->setTimeouts(array('implicit' => 0));
+        $driver->setTimeouts(['implicit' => 0]);
 
         $session->visit($this->pathTo('/js_test.html'));
         $this->findById('waitable')->click();
@@ -67,7 +69,7 @@ class TimeoutTest extends TestCase
         $driver = $session->getDriver();
         \assert($driver instanceof Selenium2Driver);
 
-        $driver->setTimeouts(array('implicit' => 5000));
+        $driver->setTimeouts(['implicit' => 5000]);
 
         $session->visit($this->pathTo('/js_test.html'));
         $this->findById('waitable')->click();
@@ -82,7 +84,7 @@ class TimeoutTest extends TestCase
         $driver = $session->getDriver();
         \assert($driver instanceof Selenium2Driver);
 
-        $driver->setTimeouts(array('page' => 500));
+        $driver->setTimeouts(['page' => 500]);
 
         $this->expectException(DriverException::class);
         $this->expectExceptionMessage('Page failed to load: ');
@@ -100,7 +102,7 @@ class TimeoutTest extends TestCase
         \assert($driver instanceof Selenium2Driver);
 
         $this->expectDeprecation('Using "' . $type . '" timeout type is deprecated, please use "page" instead');
-        $driver->setTimeouts(array($type => 500));
+        $driver->setTimeouts([$type => 500]);
 
         $this->expectException(DriverException::class);
         $this->expectExceptionMessage('Page failed to load: ');
@@ -109,9 +111,9 @@ class TimeoutTest extends TestCase
 
     public static function deprecatedPageLoadDataProvider(): array
     {
-        return array(
-            'w3c style' => array('pageLoad'),
-            'non-w3c style' => array('page load'),
-        );
+        return [
+            'w3c style' => ['pageLoad'],
+            'non-w3c style' => ['page load'],
+        ];
     }
 }

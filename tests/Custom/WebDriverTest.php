@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Behat\Mink\Tests\Driver\Custom;
 
 use Behat\Mink\Driver\Selenium2Driver;

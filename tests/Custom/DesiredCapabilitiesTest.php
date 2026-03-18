@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Behat\Mink\Tests\Driver\Custom;
 
 use Behat\Mink\Driver\Selenium2Driver;
@@ -9,7 +11,7 @@ class DesiredCapabilitiesTest extends TestCase
 {
     public function testGetDesiredCapabilities()
     {
-        $caps = array(
+        $caps = [
             'browserName'       => 'firefox',
             'version'           => '30',
             'platform'          => 'ANY',
@@ -18,8 +20,8 @@ class DesiredCapabilitiesTest extends TestCase
             'name'              => 'Selenium2 Mink Driver Test',
             'deviceOrientation' => 'portrait',
             'deviceType'        => 'tablet',
-            'selenium-version'  => '2.45.0'
-        );
+            'selenium-version'  => '2.45.0',
+        ];
 
         $driver = new Selenium2Driver('firefox', $caps);
         $this->assertNotEmpty($driver->getDesiredCapabilities(), 'desiredCapabilities empty');
@@ -29,7 +31,7 @@ class DesiredCapabilitiesTest extends TestCase
 
     public function testSetDesiredCapabilities()
     {
-        $caps = array(
+        $caps = [
             'browserName'       => 'firefox',
             'version'           => '30',
             'platform'          => 'ANY',
@@ -38,8 +40,8 @@ class DesiredCapabilitiesTest extends TestCase
             'name'              => 'Selenium2 Mink Driver Test',
             'deviceOrientation' => 'portrait',
             'deviceType'        => 'tablet',
-            'selenium-version'  => '2.45.0'
-        );
+            'selenium-version'  => '2.45.0',
+        ];
         $session = $this->getSession();
         $session->start();
         $driver = $session->getDriver();

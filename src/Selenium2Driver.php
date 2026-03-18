@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Behat\Mink.
  * (c) Konstantin Kudryashov <ever.zet@gmail.com>
@@ -125,7 +127,7 @@ class Selenium2Driver extends CoreDriver
     public function setDesiredCapabilities(?array $desiredCapabilities = null): void
     {
         if ($this->started) {
-            throw new DriverException("Unable to set desiredCapabilities, the session has already started");
+            throw new DriverException('Unable to set desiredCapabilities, the session has already started');
         }
 
         if (null === $desiredCapabilities) {
@@ -160,7 +162,7 @@ class Selenium2Driver extends CoreDriver
         // See https://sites.google.com/a/chromium.org/chromedriver/capabilities
         if (isset($desiredCapabilities['chrome'])) {
 
-            $chromeOptions = (isset($desiredCapabilities['goog:chromeOptions']) && is_array($desiredCapabilities['goog:chromeOptions']))? $desiredCapabilities['goog:chromeOptions']:[];
+            $chromeOptions = (isset($desiredCapabilities['goog:chromeOptions']) && is_array($desiredCapabilities['goog:chromeOptions'])) ? $desiredCapabilities['goog:chromeOptions'] : [];
 
             foreach ($desiredCapabilities['chrome'] as $capability => $value) {
                 if ($capability == 'switches') {
@@ -242,7 +244,7 @@ class Selenium2Driver extends CoreDriver
     {
         $hasSyn = $this->getWebDriverSession()->execute([
             'script' => 'return window.syn !== undefined && window.syn.trigger !== undefined',
-            'args'   => []
+            'args'   => [],
         ]);
 
         if (!$hasSyn) {
@@ -250,7 +252,7 @@ class Selenium2Driver extends CoreDriver
             \assert($synJs !== false);
             $this->getWebDriverSession()->execute([
                 'script' => $synJs,
-                'args'   => []
+                'args'   => [],
             ]);
         }
 
@@ -354,7 +356,8 @@ class Selenium2Driver extends CoreDriver
         }
 
         if ($seleniumMajorVersion > 3) {
-            throw new DriverException(<<<TEXT
+            throw new DriverException(
+                <<<TEXT
 This driver requires Selenium version 3 or lower, but version {$seleniumVersion} was found.
 
 Please use the "mink/webdriver-classic-driver" Mink driver or switch to Selenium Server 2.x/3.x.
@@ -670,7 +673,7 @@ TEXT
 
         $elements = [];
         foreach ($nodes as $i => $node) {
-            $elements[] = sprintf('(%s)[%d]', $xpath, $i+1);
+            $elements[] = sprintf('(%s)[%d]', $xpath, $i + 1);
         }
 
         return $elements;
@@ -948,7 +951,8 @@ JS;
     {
         if ($this->isW3C) {
             // See: https://github.com/SeleniumHQ/selenium/commit/085ceed1f55fbaaa1d419b19c73264415c394905.
-            throw new DriverException(<<<TEXT
+            throw new DriverException(
+                <<<TEXT
 Right-clicking via JsonWireProtocol is not possible on Selenium Server 3.x.
 
 Please use the "mink/webdriver-classic-driver" Mink driver or switch to Selenium Server 2.x.
@@ -969,10 +973,10 @@ TEXT
         // ensure that Selenium always has access to the file, even if it runs
         // as a remote instance.
         try {
-          $remotePath = $this->uploadFile($path);
+            $remotePath = $this->uploadFile($path);
         } catch (\Exception $e) {
-          // File could not be uploaded to remote instance. Use the local path.
-          $remotePath = $path;
+            // File could not be uploaded to remote instance. Use the local path.
+            $remotePath = $path;
         }
 
         $element->postValue(['value' => [$remotePath]]);
@@ -986,7 +990,7 @@ TEXT
     public function mouseOver(string $xpath): void
     {
         $this->getWebDriverSession()->moveto([
-            'element' => $this->findElement($xpath)->getID()
+            'element' => $this->findElement($xpath)->getID(),
         ]);
     }
 
@@ -1026,7 +1030,9 @@ TEXT
         $this->getWebDriverSession()->moveto(['element' => $source->getID()]);
         $this->getWebDriverSession()->buttondown();
 
-        $this->executeJsOnElement($source, <<<'JS'
+        $this->executeJsOnElement(
+            $source,
+            <<<'JS'
             (function (sourceElement) {
                 window['__minkDragAndDropSourceElement'] = sourceElement;
 
@@ -1038,7 +1044,9 @@ JS
         $this->getWebDriverSession()->moveto(['element' => $target->getID()]);
         $this->getWebDriverSession()->buttonup();
 
-        $this->executeJsOnElement($target, <<<'JS'
+        $this->executeJsOnElement(
+            $target,
+            <<<'JS'
             (function (targetElement) {
                 var sourceElement = window['__minkDragAndDropSourceElement'];
 
@@ -1079,7 +1087,7 @@ JS
         do {
             $result = $this->getWebDriverSession()->execute(['script' => $script, 'args' => []]);
             if ($result) {
-              break;
+                break;
             }
             usleep(10000);
         } while (microtime(true) < $end);
@@ -1298,11 +1306,11 @@ JS;
     private function uploadFile(string $path): string
     {
         if (!is_file($path)) {
-          throw new DriverException('File does not exist locally and cannot be uploaded to the remote instance.');
+            throw new DriverException('File does not exist locally and cannot be uploaded to the remote instance.');
         }
 
         if (!class_exists('ZipArchive')) {
-          throw new DriverException('Could not compress file, PHP is compiled without zip support.');
+            throw new DriverException('Could not compress file, PHP is compiled without zip support.');
         }
 
         // Selenium only accepts uploads that are compressed as a Zip archive.
@@ -1315,31 +1323,31 @@ JS;
         $archive = new \ZipArchive();
         $result = $archive->open($tempFilename, \ZipArchive::OVERWRITE);
         if ($result !== true) {
-          throw new DriverException('Zip archive could not be created. Error ' . $result);
+            throw new DriverException('Zip archive could not be created. Error ' . $result);
         }
         $result = $archive->addFile($path, basename($path));
         if (!$result) {
-          throw new DriverException('File could not be added to zip archive.');
+            throw new DriverException('File could not be added to zip archive.');
         }
         $result = $archive->close();
         if (!$result) {
-          throw new DriverException('Zip archive could not be closed.');
+            throw new DriverException('Zip archive could not be closed.');
         }
 
         $fileContents = file_get_contents($tempFilename);
         \assert($fileContents !== false);
 
         try {
-          $remotePath = $this->getWebDriverSession()->file(['file' => base64_encode($fileContents)]);
+            $remotePath = $this->getWebDriverSession()->file(['file' => base64_encode($fileContents)]);
 
-          // If no path is returned the file upload failed silently. In this
-          // case it is possible Selenium was not used but another web driver
-          // such as PhantomJS.
-          // @todo Support other drivers when (if) they get remote file transfer
-          // capability.
-          if (empty($remotePath)) {
-            throw new UnknownError();
-          }
+            // If no path is returned the file upload failed silently. In this
+            // case it is possible Selenium was not used but another web driver
+            // such as PhantomJS.
+            // @todo Support other drivers when (if) they get remote file transfer
+            // capability.
+            if (empty($remotePath)) {
+                throw new UnknownError();
+            }
         } finally {
             unlink($tempFilename);
         }

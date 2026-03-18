@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Behat\Mink\Tests\Driver\Custom;
 
 use Behat\Mink\Exception\DriverException;
@@ -27,7 +29,8 @@ final class SeleniumSupportTest extends TestCase
         }
 
         $this->expectException(DriverException::class);
-        $this->expectExceptionMessage(<<<TEXT
+        $this->expectExceptionMessage(
+            <<<TEXT
 Right-clicking via JsonWireProtocol is not possible on Selenium Server 3.x.
 
 Please use the "mink/webdriver-classic-driver" Mink driver or switch to Selenium Server 2.x.

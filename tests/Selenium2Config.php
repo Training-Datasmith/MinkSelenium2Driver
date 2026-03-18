@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Behat\Mink\Tests\Driver;
 
 use Behat\Mink\Driver\DriverInterface;
@@ -15,7 +17,6 @@ use Behat\Mink\Tests\Driver\Js\JavascriptTest;
 
 class Selenium2Config extends AbstractConfig
 {
-
     /**
      * @var integer
      */
@@ -51,9 +52,9 @@ class Selenium2Config extends AbstractConfig
 
     public function skipMessage($testCase, $test): ?string
     {
-        $testCallback = array($testCase, $test);
+        $testCallback = [$testCase, $test];
 
-        if (array(Html5Test::class, 'testHtml5Types') === $testCallback) {
+        if ([Html5Test::class, 'testHtml5Types'] === $testCallback) {
             return <<<TEXT
 WebDriver does not support setting value in color inputs.
 
@@ -80,7 +81,7 @@ TEXT;
             return 'Checking status code is not supported.';
         }
 
-        if (array(JavascriptTest::class, 'testDragDropOntoHiddenItself') === $testCallback) {
+        if ([JavascriptTest::class, 'testDragDropOntoHiddenItself'] === $testCallback) {
             $browser = $_SERVER['WEB_FIXTURES_BROWSER'] ?? null;
 
             if ($browser === 'firefox' && $this->getSeleniumMajorVersion() === 2) {
@@ -89,7 +90,7 @@ TEXT;
         }
 
         // Skip right-clicking tests, when an unsupported Selenium version detected.
-        if ((array(HoverTest::class, 'testRightClickHover') === $testCallback || array(EventsTest::class, 'testRightClick') === $testCallback)
+        if (([HoverTest::class, 'testRightClickHover'] === $testCallback || [EventsTest::class, 'testRightClick'] === $testCallback)
             && !$this->isRightClickingInSeleniumSupported()
         ) {
             return <<<TEXT
@@ -100,7 +101,7 @@ TEXT;
         }
 
         // Skips all tests, except mentioned below, for an unsupported Selenium version.
-        if (array(SeleniumSupportTest::class, 'testDriverCannotBeUsedInUnsupportedSelenium') !== $testCallback
+        if ([SeleniumSupportTest::class, 'testDriverCannotBeUsedInUnsupportedSelenium'] !== $testCallback
             && !$this->isSeleniumVersionSupported()
         ) {
             return 'Does not apply to unsupported Selenium versions.';
