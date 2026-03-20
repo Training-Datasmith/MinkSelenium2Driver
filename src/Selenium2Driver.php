@@ -74,11 +74,16 @@ class Selenium2Driver extends Core_Driver
      */
     private $xpath_escaper;
     /**
-     * Instantiates the driver.
+     * Instantiates the Selenium2 driver.
      *
-     * @param string     $browserName         Browser name
-     * @param array|null $desiredCapabilities The desired capabilities
-     * @param string     $wdHost              The WebDriver host
+     * Connects to a running WebDriver server (e.g. Selenium Grid, ChromeDriver,
+     * or GeckoDriver) at the given host URL.  Capabilities are merged with the
+     * default capability set; call set_desired_capabilities() before start()
+     * to override individual keys after construction.
+     *
+     * @param string          $browser_name         Browser to launch ('firefox', 'chrome', 'safari', etc.)
+     * @param array<string, mixed>|null $desired_capabilities WebDriver capability overrides, or null for defaults
+     * @param string          $wd_host              WebDriver remote URL (default: local Selenium Grid)
      */
     public function __construct(string $browser_name = 'firefox', ?array $desired_capabilities = null, string $wd_host = 'http://localhost:4444/wd/hub')
     {
@@ -99,15 +104,19 @@ class Selenium2Driver extends Core_Driver
         $this->browser_name = $browser_name;
     }
     /**
-     * Sets the desired capabilities - called on construction.  If null is provided, will set the
-     * defaults as desired.
+     * Sets the WebDriver desired capabilities.
      *
-     * See http://code.google.com/p/selenium/wiki/DesiredCapabilities
+     * Must be called before start(); throws if the session is already running.
+     * When null is provided, the driver uses default capabilities for the
+     * configured browser. Merges caller-supplied overrides onto the defaults.
      *
-     * @param array|null $desiredCapabilities an array of capabilities to pass on to the WebDriver server
+     * @see https://w3c.github.io/webdriver/#capabilities
      *
+     * @param array<string, mixed>|null $desired_capabilities Capability map to send to the WebDriver server, or null for defaults
      *
-     * @throws DriverException
+     * @return void
+     *
+     * @throws \Behat\Mink\Exception\Driver_Exception If the session has already been started
      */
     public function set_desired_capabilities(?array $desired_capabilities = null): void
     {
