@@ -1117,6 +1117,15 @@ JS
             $window = $this->getWebDriverSession()->window('current');
             \assert($window instanceof Window);
             $window->maximize();
+
+            // Firefox with Selenium 2 may ignore maximize after resizeWindow.
+            $heightDiff = (int) $this->evaluateScript('return Math.abs(screen.availHeight - window.outerHeight);');
+            if ($heightDiff > 100) {
+                $window->postSize([
+                    'width' => (int) $this->evaluateScript('return screen.availWidth;'),
+                    'height' => (int) $this->evaluateScript('return screen.availHeight;'),
+                ]);
+            }
         });
     }
 
